@@ -1,0 +1,110 @@
+Description
+This database records the user’s state on a daily basis. It also keeps track of therapists they’ve been connected with, their health history, goals and recommendations. 
+
+Proposed Tables
+user_sleep (records how the user’s sleep was)
+sleep_id 
+sleep_quality_rating
+sleep_description
+sleep_duration 
+mood (records the user’s mood i.e. anger, depression, etc.)
+mood_id 
+mood_description 
+mood_severity
+physical_symptoms (records user’s physical state i.e. fatigue, lack of appetite, etc.)
+symptom_id 
+symptom_description 
+symptom_severity 
+journal_entries (daily log for user)
+journal_id 
+user_id 
+sleep_id
+mood_id
+journal_symptoms_id
+wellness_rank
+notes (they can provide more details of their current state)
+recorded_datetime
+therapists (possible therapists users can be connected with)
+therapist_id 
+therapist_first_name
+therapist_last_name
+phone_no 
+email 
+specialty_id
+active_flag (whether the therapist is available)
+specialties (i.e. family therapist, depression therapist, etc.)
+specialty_id 
+specialty_name
+specialty_description 
+user_information (personal information related to user)
+user_profile_id
+user_id
+first_name
+last_name
+dob
+sex 
+pronouns
+user_account (info related the the user’s account)
+user_id
+password
+recovery_email
+phone_no
+created_date
+active_flag (whether the account is active)
+medications (medications users may possible be taking)
+med_id
+med_name
+med_category (enum)
+med_purpose 
+illness
+illness_id
+illness_name 
+illness_description 
+activities 
+activity_id
+activity_type (enum)
+activity_description 
+user_goals 
+goal_id 
+user_id
+goal_category (enum)
+goal_description
+time_range
+accomplished_flag
+user_sessions
+session_id
+user_id
+therapist_id
+datetime
+duration
+session_type
+goal_id (nullable)
+notes (nullable)
+recommended_activities (nullable)
+Junction Tables 
+user_journal_symptoms (links symptoms to a journal entry)
+journal_symptoms_id
+journal_id
+symptom_id
+session_rec_activities 
+ses_act_id
+session_id
+activity_id
+user_meds
+user_med_id
+user_id
+med_id
+user_illness
+user_illness_id
+user_id
+illness_id
+user_activities
+user_act_id
+user_id
+activity_id
+goal_id (nullable)
+Indexes 
+What users have what illness
+What user meds are
+What users have the wellness ranks 
+What user activities are
