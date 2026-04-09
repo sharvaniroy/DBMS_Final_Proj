@@ -20,7 +20,7 @@ CREATE TABLE therapists (
 	FOREIGN KEY (fk_specialty_id)
 	REFERENCES specialties(specialty_id)
 	ON UPDATE CASCADE
-);
+)ENGINE=InnoDB;
 
 CREATE TABLE user_sessions(
 	session_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -42,13 +42,13 @@ CREATE TABLE user_sessions(
 	FOREIGN KEY (fk_goal_id) 
 	REFERENCES user_goals(goal_id)
 	ON UPDATE CASCADE
-);
+)ENGINE=InnoDB;
 
 CREATE TABLE activities (
     activity_id  INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     activity_type ENUM ('Exercising', 'Journaling', 'Reading', 'Crafting', 'Meditation') NOT NULL,
     activity_description VARCHAR(300)
-);
+)ENGINE=InnoDB;
 
 CREATE TABLE user_goals (
 	goal_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -60,7 +60,7 @@ CREATE TABLE user_goals (
 	FOREIGN KEY (fk_user_id) 
     REFERENCES user_account(user_id)
 	ON DELETE CASCADE ON UPDATE CASCADE
-);
+)ENGINE=InnoDB;
 
 CREATE TABLE user_activities (
 	user_act_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -79,7 +79,7 @@ CREATE TABLE user_activities (
     FOREIGN KEY (fk_goal_id)
     REFERENCES user_goals(goal_id)
 	ON UPDATE CASCADE
-);
+)ENGINE=InnoDB;
 
 CREATE TABLE session_rec_activities(
 	ses_act_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -93,7 +93,7 @@ CREATE TABLE session_rec_activities(
 	FOREIGN KEY (fk_activity_id)
 	REFERENCES activities(activity_id)
 	ON UPDATE CASCADE
-);
+)ENGINE=InnoDB;
 
 #Inserting Values
 
