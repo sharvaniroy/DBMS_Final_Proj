@@ -30,7 +30,6 @@ CREATE TABLE user_sessions(
 	duration INT, #miniutes
 	session_type ENUM ('Weekly', 'Biweekly', 'Check In', 'Emergency') NOT NULL,
 	notes VARCHAR(500),
-	#recommended_activities VARCHAR(50),
      
 	FOREIGN KEY (fk_user_id) 
 	REFERENCES user_account(user_id)
@@ -54,7 +53,6 @@ CREATE TABLE activities (
 CREATE TABLE user_goals (
 	goal_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	fk_user_id INT NOT NULL,
-	#goal_category ENUM () NOT NULL,
 	goal_description VARCHAR(300),
 	target_date DATE, 
 	accomplished_flag BOOLEAN DEFAULT FALSE NOT NULL,
