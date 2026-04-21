@@ -1,11 +1,11 @@
-USE shr176;
+USE sst_mental_health;
 
 DROP TABLE IF EXISTS session_rec_activities;
 DROP TABLE IF EXISTS user_activities;
 DROP TABLE IF EXISTS user_sessions;
 DROP TABLE IF EXISTS user_goals;
 DROP TABLE IF EXISTS journal_symptoms;
-DROP TABLE IF EXISTS user_journal_sleep;
+DROP TABLE IF EXISTS journal_sleep;
 DROP TABLE IF EXISTS journal_entries;
 DROP TABLE IF EXISTS user_meds;
 DROP TABLE IF EXISTS user_illness;
@@ -30,8 +30,7 @@ CREATE TABLE user_account (
 )  ENGINE=INNODB;
 
 CREATE TABLE user_information (
-    user_profile_id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT UNIQUE NOT NULL,
+    user_id INT PRIMARY KEY,
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(30) NOT NULL,
     dob DATE NOT NULL,
@@ -126,18 +125,13 @@ CREATE TABLE journal_symptoms (
         ON DELETE CASCADE
 )  ENGINE=INNODB;
 
-CREATE TABLE user_journal_sleep (
-    sleep_id INT AUTO_INCREMENT PRIMARY KEY,
-    journal_id INT NOT NULL UNIQUE,
-    user_id INT NOT NULL,
+CREATE TABLE journal_sleep (
+    journal_id INT PRIMARY KEY,
     sleep_quality_rating TINYINT NOT NULL CHECK (sleep_quality_rating BETWEEN 1 AND 10),
     sleep_description TEXT NOT NULL,
     sleep_duration DECIMAL(4 , 2 ) NOT NULL,
     FOREIGN KEY (journal_id)
         REFERENCES journal_entries (journal_id)
-        ON DELETE CASCADE,
-    FOREIGN KEY (user_id)
-        REFERENCES user_account (user_id)
         ON DELETE CASCADE
 )  ENGINE=INNODB;
 
@@ -228,8 +222,7 @@ CREATE TABLE session_rec_activities (
 
 CREATE INDEX idx_journal_user_id ON journal_entries(user_id);
 CREATE INDEX idx_journal_mood_id ON journal_entries(mood_id);
-CREATE INDEX idx_sleep_journal_id ON user_journal_sleep(journal_id);
-CREATE INDEX idx_sleep_user_id ON user_journal_sleep(user_id);
+CREATE INDEX idx_sleep_journal_id ON journal_sleep(journal_id);
 CREATE INDEX idx_user_sessions_user_id ON user_sessions(user_id);
 CREATE INDEX idx_user_sessions_therapist_id ON user_sessions(therapist_id);
 CREATE INDEX idx_user_sessions_goal_id ON user_sessions(goal_id);
@@ -326,14 +319,14 @@ VALUES
 	(5, 4, 10, 10, 'Very calm and focused throughout the day.', '2026-04-11 19:30:00'),
 	(5, 5, 8, 2, 'Very stressed, difficult day overall.', '2026-04-12 23:00:00');
 
-INSERT INTO user_journal_sleep 
-(journal_id, user_id, sleep_quality_rating, sleep_description, sleep_duration)
+INSERT INTO journal_sleep 
+(journal_id, sleep_quality_rating, sleep_description, sleep_duration)
 VALUES
-	(1, 1, 2, 'Restless sleep with frequent waking', 5.25),
-	(2, 2, 8, 'Slept well with minimal interruptions', 7.50),
-	(3, 3, 6, 'Moderate sleep, woke up once during the night', 6.00),
-	(4, 5, 10, 'Excellent sleep, felt fully rested', 8.00),
-	(5, 5, 1, 'Very poor sleep, struggled to fall asleep', 3.75);
+	(1, 2, 'Restless sleep with frequent waking', 5.25),
+	(2, 8, 'Slept well with minimal interruptions', 7.50),
+	(3, 6, 'Moderate sleep, woke up once during the night', 6.00),
+	(4, 10, 'Excellent sleep, felt fully rested', 8.00),
+	(5, 1, 'Very poor sleep, struggled to fall asleep', 3.75);
 
 INSERT INTO journal_symptoms (journal_id, symptom_id, symptom_severity)
 VALUES
@@ -393,9 +386,8 @@ VALUES
     (3, 3),
     (4, 5),
     (5, 5);
-
-
---Transaction/procedure
+    
+-- Transaction/procedure
 
 DELIMITER @@
 
@@ -434,8 +426,8 @@ BEGIN
 
     SET v_journal_id = LAST_INSERT_ID();
 
-    INSERT INTO user_journal_sleep (journal_id, user_id, sleep_quality_rating, sleep_description, sleep_duration)
-    VALUES (v_journal_id, p_user_id, p_sleep_quality, p_sleep_desc, p_sleep_duration);
+    INSERT INTO journal_sleep (journal_id, sleep_quality_rating, sleep_description, sleep_duration)
+    VALUES (v_journal_id, p_sleep_quality, p_sleep_desc, p_sleep_duration);
 
     INSERT INTO journal_symptoms (journal_id, symptom_id, symptom_severity)
     VALUES (v_journal_id, p_symptom1_id, p_symptom1_sev);
