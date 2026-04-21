@@ -393,3 +393,58 @@ VALUES
     (3, 3),
     (4, 5),
     (5, 5);
+
+
+--Transaction/procedure
+
+DELIMITER @@
+
+DROP PROCEDURE IF EXISTS sp_insert_journal_entry@@
+CREATE PROCEDURE sp_insert_journal_entry(
+    IN p_user_id        INT,
+    IN p_mood_id        INT,
+    IN p_mood_severity  TINYINT,
+    IN p_wellness_rank  INT,
+    IN p_notes          TEXT,
+    
+    IN p_sleep_quality  TINYINT,
+    IN p_sleep_desc     TEXT,
+    IN p_sleep_duration DECIMAL(4,2),
+    
+    IN p_symptom1_id    INT,
+    IN p_symptom1_sev   TINYINT,
+    IN p_symptom2_id    INT,
+    IN p_symptom2_sev   TINYINT
+)
+BEGIN
+    DECLARE v_journal_id INT;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1
+            @err_msg = MESSAGE_TEXT;
+        ROLLBACK;
+        SELECT @err_msg AS error_message;
+    END;
+
+    START TRANSACTION;
+
+    INSERT INTO journal_entries (user_id, mood_id, mood_severity, wellness_rank, notes)
+    VALUES (p_user_id, p_mood_id, p_mood_severity, p_wellness_rank, p_notes);
+
+    SET v_journal_id = LAST_INSERT_ID();
+
+    INSERT INTO user_journal_sleep (journal_id, user_id, sleep_quality_rating, sleep_description, sleep_duration)
+    VALUES (v_journal_id, p_user_id, p_sleep_quality, p_sleep_desc, p_sleep_duration);
+
+    INSERT INTO journal_symptoms (journal_id, symptom_id, symptom_severity)
+    VALUES (v_journal_id, p_symptom1_id, p_symptom1_sev);
+
+    INSERT INTO journal_symptoms (journal_id, symptom_id, symptom_severity)
+    VALUES (v_journal_id, p_symptom2_id, p_symptom2_sev);
+
+    COMMIT;
+
+END@@
+
+DELIMITER ;
