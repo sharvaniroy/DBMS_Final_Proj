@@ -403,11 +403,10 @@ CREATE PROCEDURE sp_insert_journal_entry(
     IN p_sleep_desc     TEXT,
     IN p_sleep_duration DECIMAL(4,2),
     
-    IN p_symptom1_id    INT,
-    IN p_symptom1_sev   TINYINT,
-    IN p_symptom2_id    INT,
-    IN p_symptom2_sev   TINYINT
+    IN p_symptom_id    INT,
+    IN p_symptom_sev   TINYINT,
 )
+	
 BEGIN
     DECLARE v_journal_id INT;
 
@@ -430,10 +429,7 @@ BEGIN
     VALUES (v_journal_id, p_sleep_quality, p_sleep_desc, p_sleep_duration);
 
     INSERT INTO journal_symptoms (journal_id, symptom_id, symptom_severity)
-    VALUES (v_journal_id, p_symptom1_id, p_symptom1_sev);
-
-    INSERT INTO journal_symptoms (journal_id, symptom_id, symptom_severity)
-    VALUES (v_journal_id, p_symptom2_id, p_symptom2_sev);
+    VALUES (v_journal_id, p_symptom_id, p_symptom_sev);
 
     COMMIT;
 
