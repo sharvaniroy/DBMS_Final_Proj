@@ -1,4 +1,4 @@
-USE shr176;
+USE sst_mental_health;
 
 -- Create table statements
 
