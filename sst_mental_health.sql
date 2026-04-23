@@ -446,3 +446,52 @@ BEGIN
 END@@
 
 DELIMITER ;
+
+DROP VIEW IF EXISTS vw_journal_entry_details;
+
+CREATE VIEW vw_journal_entry_details AS
+SELECT
+    je.journal_id,
+    je.user_id,
+    ui.first_name,
+    ui.last_name,
+    je.recorded_datetime,
+    m.mood_description,
+    je.mood_severity,
+    je.wellness_rank,
+    je.notes,
+    js.sleep_quality_rating,
+    js.sleep_description,
+    js.sleep_duration
+FROM journal_entries je
+JOIN user_information ui
+    ON je.user_id = ui.user_id
+JOIN mood m
+    ON je.mood_id = m.mood_id
+LEFT JOIN journal_sleep js
+    ON je.journal_id = js.journal_id;
+    
+DROP VIEW IF EXISTS vw_user_session_details;
+      
+CREATE VIEW vw_user_session_details AS
+SELECT
+    us.session_id,
+    us.user_id,
+    ui.first_name,
+    ui.last_name,
+    us.session_date,
+    us.duration,
+    us.session_type,
+    us.notes,
+    t.therapist_id,
+    t.therapist_first_name,
+    t.therapist_last_name,
+    t.email AS therapist_email,
+    s.specialty_name
+FROM user_sessions us
+JOIN user_information ui
+    ON us.user_id = ui.user_id
+JOIN therapists t
+    ON us.therapist_id = t.therapist_id
+JOIN specialties s
+    ON t.specialty_id = s.specialty_id;
