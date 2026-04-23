@@ -233,6 +233,7 @@ CREATE INDEX idx_user_sessions_therapist_id ON user_sessions(therapist_id);
 CREATE INDEX idx_user_sessions_goal_id ON user_sessions(goal_id);
 CREATE INDEX idx_user_activities_user_id ON user_activities(user_id);
 CREATE INDEX idx_user_activities_activity_id ON user_activities(activity_id);
+CREATE INDEX idx_user_goals_user_id ON user_goals(user_id);
 
 -- Sample data inserts 
 
