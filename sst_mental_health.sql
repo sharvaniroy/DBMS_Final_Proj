@@ -1,4 +1,6 @@
-USE sst_mental_health;
+USE shr176;
+
+-- Create table statements
 
 DROP TABLE IF EXISTS session_rec_activities;
 DROP TABLE IF EXISTS user_activities;
@@ -101,7 +103,7 @@ CREATE TABLE journal_entries (
     user_id INT NOT NULL,
     mood_id INT NOT NULL,
     mood_severity TINYINT NOT NULL CHECK (mood_severity BETWEEN 1 AND 10),
-    wellness_rank INT NOT NULL CHECK (wellness_rank BETWEEN 1 AND 10),
+    wellness_rank TINYINT NOT NULL CHECK (wellness_rank BETWEEN 1 AND 10),
     notes TEXT NOT NULL,
     recorded_datetime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id)
@@ -115,7 +117,7 @@ CREATE TABLE journal_entries (
 CREATE TABLE journal_symptoms (
     journal_id INT NOT NULL,
     symptom_id INT NOT NULL,
-    symptom_severity TINYINT NOT NULL,
+    symptom_severity TINYINT NOT NULL CHECK (symptom_severity BETWEEN 1 AND 10),
     PRIMARY KEY (journal_id , symptom_id),
     FOREIGN KEY (journal_id)
         REFERENCES journal_entries (journal_id)
@@ -126,7 +128,8 @@ CREATE TABLE journal_symptoms (
 )  ENGINE=INNODB;
 
 CREATE TABLE journal_sleep (
-    journal_id INT PRIMARY KEY,
+    sleep_id INT PRIMARY KEY AUTO_INCREMENT,
+    journal_id INT UNIQUE,
     sleep_quality_rating TINYINT NOT NULL CHECK (sleep_quality_rating BETWEEN 1 AND 10),
     sleep_description TEXT NOT NULL,
     sleep_duration DECIMAL(4 , 2 ) NOT NULL,
@@ -170,7 +173,7 @@ CREATE TABLE user_sessions (
     session_id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL,
     therapist_id INT NOT NULL,
-    session_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    session_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     duration INT NOT NULL,
     session_type VARCHAR(20) NOT NULL,
     notes VARCHAR(500),
@@ -220,6 +223,8 @@ CREATE TABLE session_rec_activities (
         ON UPDATE CASCADE
 )  ENGINE=INNODB;
 
+-- Indexes 
+
 CREATE INDEX idx_journal_user_id ON journal_entries(user_id);
 CREATE INDEX idx_journal_mood_id ON journal_entries(mood_id);
 CREATE INDEX idx_sleep_journal_id ON journal_sleep(journal_id);
@@ -228,6 +233,8 @@ CREATE INDEX idx_user_sessions_therapist_id ON user_sessions(therapist_id);
 CREATE INDEX idx_user_sessions_goal_id ON user_sessions(goal_id);
 CREATE INDEX idx_user_activities_user_id ON user_activities(user_id);
 CREATE INDEX idx_user_activities_activity_id ON user_activities(activity_id);
+
+-- Sample data inserts 
 
 INSERT INTO user_account (hash_pwd, email, phone_no, created_date, active_flag)
 VALUES
@@ -386,6 +393,9 @@ VALUES
     (3, 3),
     (4, 5),
     (5, 5);
+
+-- Views
+    
     
 -- Transaction/procedure
 
@@ -404,9 +414,8 @@ CREATE PROCEDURE sp_insert_journal_entry(
     IN p_sleep_duration DECIMAL(4,2),
     
     IN p_symptom_id    INT,
-    IN p_symptom_sev   TINYINT,
-)
-	
+    IN p_symptom_sev   TINYINT
+) 	
 BEGIN
     DECLARE v_journal_id INT;
 
